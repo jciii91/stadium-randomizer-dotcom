@@ -1,0 +1,7 @@
+<div class="file-upload-container">
+    <h2>Upload Your Stadium ROM</h2>
+    <form (submit)="onSubmit($event)">
+      <input type="file" (change)="onFileSelected($event)" />
+      <button type="submit" [disabled]="!selectedFile">Upload</button>
+    </form>
+</div>  

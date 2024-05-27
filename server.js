@@ -4,14 +4,16 @@ const multer = require('multer');
 const axios = require('axios');
 const fs = require('fs');
 const path = require('node:path');
+const cors = require('cors');
 
 const app = express();
 const port = 3000;
 
-const upload = multer({ dest: 'uploads/' });
+const upload = multer({ dest: 'api/uploads/' });
 
 app.use(bodyParser.raw({ type: 'application/octet-stream', limit: '35mb' }));
 app.use(express.static('public'));
+app.use(cors());
 
 app.post('/upload', upload.single('file'), (req, res) => {
     const filePath = path.join(__dirname, 'uploads', 'pkROM.z64');
