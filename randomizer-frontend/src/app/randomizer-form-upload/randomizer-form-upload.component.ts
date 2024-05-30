@@ -51,7 +51,7 @@ export class RandomizerFormUploadComponent {
     .subscribe({
       next: (response: HttpResponse<Blob>) => {
         console.log('Upload successful', response);
-        this.downloadFile(response.body, 'pkStadium.z64');
+        this.downloadFile(response.body, 'processed/PKseed.z64');
       },
       error: (error: any) => {
         console.log('Upload failed', error);

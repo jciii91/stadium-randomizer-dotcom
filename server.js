@@ -16,7 +16,7 @@ app.use(express.static('public'));
 app.use(cors());
 
 app.post('/upload', upload.single('file'), (req, res) => {
-    const filePath = path.join(__dirname, 'uploads', 'pkROM.z64');
+    const filePath = path.join(__dirname, 'randomizer/uploads', 'baseROM.z64');
     fs.writeFileSync(filePath, req.body);
     const fileBuffer = fs.readFileSync(filePath);
   
@@ -30,9 +30,16 @@ app.post('/upload', upload.single('file'), (req, res) => {
     }
   })
   .then(response => {
-    const outputFilePath = path.join(__dirname, 'downloads', 'randomizedROM.z64');
-    const writer = fs.createWriteStream(outputFilePath);
+    const outputFilePath = path.join(__dirname, 'randomizer/downloads', 'PKseed.z64');
     
+    // create an empty file for writing
+    try {
+      fs.closeSync(fs.openSync(outputFilePath, 'w'));
+    } catch (error) {
+      console.log(error)
+    }
+
+    const writer = fs.createWriteStream(outputFilePath);
     response.data.pipe(writer);
     
     writer.on('finish', () => {
