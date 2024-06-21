@@ -9,28 +9,31 @@ const cors = require('cors');
 const app = express();
 const port = 3000;
 
-const upload = multer({ dest: 'api/uploads/' });
+const upload = multer();
 
 app.use(bodyParser.raw({ type: 'application/octet-stream', limit: '35mb' }));
 app.use(express.static('public'));
 app.use(cors());
 
 app.post('/upload', upload.single('file'), (req, res) => {
-    const filePath = path.join(__dirname, 'randomizer/uploads', 'baseROM.z64');
-    fs.writeFileSync(filePath, req.body);
-    const fileBuffer = fs.readFileSync(filePath);
-  
+  const formData = new FormData();
+  const fileBlob = new Blob([req.file.buffer], { type: 'application/octet-stream' });
+  formData.append('baseStatsSliderValue', req.body.baseStatsSliderValue);
+  formData.append('attacksSliderValue', req.body.attacksSliderValue);
+  formData.append('seedCountValue', req.body.seedCountValue);
+  formData.append('file', fileBlob, 'baseROM.z64');
+
   axios({
     method: 'post',
     url: 'http://localhost:5000/process',
-    data: fileBuffer,
+    data: formData,
     responseType: 'stream',
     headers: {
-      'Content-Type': 'application/octet-stream'
+      'Content-Type': 'multipart/form-data'
     }
   })
   .then(response => {
-    const outputFilePath = path.join(__dirname, 'randomizer/downloads', 'PKseed.z64');
+    const outputFilePath = path.join(__dirname, 'randomizer/downloads', 'test.z64');
     
     // create an empty file for writing
     try {
@@ -47,7 +50,6 @@ app.post('/upload', upload.single('file'), (req, res) => {
         if (err) {
           console.error(err);
         }
-        fs.unlinkSync(filePath);
         fs.unlinkSync(outputFilePath);
       });
     });

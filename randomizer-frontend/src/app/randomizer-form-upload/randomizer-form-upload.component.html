@@ -1,7 +1,34 @@
 <div class="file-upload-container">
-    <h2>Upload Your Stadium ROM</h2>
-    <form (submit)="onSubmit($event)">
+  <h2>Upload Your Stadium ROM</h2>
+  <form (submit)="onSubmit($event)">
       <input type="file" (change)="onFileSelected($event)" />
+      
+      <div class="separator"></div>
+
+      <h3>Randomization Levels</h3>
+      <div class="form-group">
+        <label class="range-label" for="baseStatsSlider">Base Stats:</label>
+        <input type="range" id="baseStatsSlider" name="baseStatsSlider" min="0" max="3" step="1" value="1" (input)="onSliderChange($event)" />
+      </div>
+      <div class="slider-ticks">
+        <span class="tick">Vanilla</span>
+        <span class="tick">Balanced</span>
+        <span class="tick">Less Balanced</span>
+        <span class="tick">Fully Random</span>
+      </div>
+      
+      <div class="form-group">
+        <label class="range-label" for="attacksSlider">Attacks:</label>
+        <input type="range" id="attacksSlider" name="attacksSlider" min="0" max="3" step="1" value="1" (input)="onSliderChange($event)" />
+      </div>
+
+      <div class="separator"></div>
+
+      <div class="form-group">
+        <label class="number-label" for="seedCount">Number of seeds (max 20):</label>
+        <input type="number" id="seedCount" name="seedCount" min="1" max="20" value="1" (input)="onSeedCountChange($event)" title="Please enter a number of seeds to generate, maximum of 20." required />
+      </div>
+      
       <button type="submit" [disabled]="!selectedFile">Upload</button>
-    </form>
-</div>  
+  </form>
+</div>

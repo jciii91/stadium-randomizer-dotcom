@@ -1,6 +1,5 @@
 import random
 import shutil
-import os
 
 import constants
 import util
@@ -9,10 +8,12 @@ import randomizePokemonBaseValues
 import randomMovesetGenerator
 import writeDisplayData
 
-def randomizer_func(rom_path, output_path=''):
+def randomizer_func(rom_path, output_file, settings_dict):
     exe_path = "n64-checksum.exe"
+    base_rando_factor = int(settings_dict['base'])
+    attack_rando_factor = int(settings_dict['attack'])
 
-    randomizer = randomizePokemonBaseValues.BaseValuesRandomizer()
+    randomizer = randomizePokemonBaseValues.BaseValuesRandomizer(base_rando_factor)
 
     new_display_stats = []
     bst_list = []
@@ -22,32 +23,30 @@ def randomizer_func(rom_path, output_path=''):
         evs.append(util.Util.random_int_set(0, 65535, 5))
         ivs.append(util.Util.random_string_hex(4))
 
-    if output_path == '':
-        output_file = "PKseed.z64"
-    else:
-        output_file = output_path + "/PKseed.z64"
     shutil.copy(rom_path, output_file)
     with open(output_file, "rb+") as rom:
+        # randomize base stats, unless setting set to 'Vanilla'
         rom.seek(465825)
-        for i in range(0, 151):
-            stats = bytearray(rom.read(5))
-            rom.seek(-5, 1)
-            randomizer.set_original_stats(stats)
-            randomized_base_stats = randomizer.randomize_stats()
+        if base_rando_factor > 0:
+            for i in range(0, 151):
+                stats = bytearray(rom.read(5))
+                rom.seek(-5, 1)
+                randomizer.set_original_stats(stats)
+                randomized_base_stats = randomizer.randomize_stats()
 
-            bst_str = randomized_base_stats.hex()
-            bst = []
-            for offset in range(0, 5):
-                index = offset * 2
-                bst.append(int(bst_str[index:index + 2], 16))
-            bst_list.append(bst)
+                bst_str = randomized_base_stats.hex()
+                bst = []
+                for offset in range(0, 5):
+                    index = offset * 2
+                    bst.append(int(bst_str[index:index + 2], 16))
+                bst_list.append(bst)
 
-            new_display_stats.append(randomized_base_stats)
-            rom.write(randomized_base_stats)
-            rom.seek(18, 1)
+                new_display_stats.append(randomized_base_stats)
+                rom.write(randomized_base_stats)
+                rom.seek(18, 1)
 
-        rom.seek(9057228)
         # randomize round 1 gym castle Pokémon
+        rom.seek(9057228)
         for q in range(0, 10):
             team_count = 4 if q < 9 else 7
             for r in range(0, team_count):
@@ -60,11 +59,15 @@ def randomizer_func(rom_path, output_path=''):
                     rom.write(bytes.fromhex(new_type))
 
                     rom.seek(1, 1)
-                    new_attacks = randomMovesetGenerator.MovesetGenerator.get_random_moveset(bst_list[pokedex_num])
-                    new_attacks_bytearray = bytearray()
-                    for attack in new_attacks:
-                        new_attacks_bytearray.extend(int.to_bytes(attack, 1, "big"))
-                    rom.write(new_attacks_bytearray)
+                    # randomize moveset unless setting is 'Vanilla'
+                    if attack_rando_factor > 0:
+                        new_attacks = randomMovesetGenerator.MovesetGenerator.get_random_moveset(bst_list[pokedex_num], attack_rando_factor)
+                        new_attacks_bytearray = bytearray()
+                        for attack in new_attacks:
+                            new_attacks_bytearray.extend(int.to_bytes(attack, 1, "big"))
+                        rom.write(new_attacks_bytearray)
+                    else:
+                        rom.seek(4,1)
 
                     rom.seek(4, 1)
                     exp = int.to_bytes(int(constants.kanto_dex_names[pokedex_num]["exp"]), 3, "big")
@@ -98,11 +101,15 @@ def randomizer_func(rom_path, output_path=''):
         # randomize gym castle rentals
         rom.seek(9119629)
         for j in range(0, 149):
-            new_attacks = randomMovesetGenerator.MovesetGenerator.get_random_moveset(bst_list[j])
-            new_attacks_bytearray = bytearray()
-            for attack in new_attacks:
-                new_attacks_bytearray.extend(int.to_bytes(attack, 1, "big"))
-            rom.write(new_attacks_bytearray)
+            # randomize moveset unless setting is 'Vanilla'
+            if attack_rando_factor > 0:
+                new_attacks = randomMovesetGenerator.MovesetGenerator.get_random_moveset(bst_list[j], attack_rando_factor)
+                new_attacks_bytearray = bytearray()
+                for attack in new_attacks:
+                    new_attacks_bytearray.extend(int.to_bytes(attack, 1, "big"))
+                rom.write(new_attacks_bytearray)
+            else:
+                rom.seek(4,1)
 
             rom.seek(7, 1)
             for k in range(0, 5):

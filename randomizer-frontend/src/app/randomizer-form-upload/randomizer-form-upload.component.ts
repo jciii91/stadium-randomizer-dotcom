@@ -11,6 +11,9 @@ import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 
 export class RandomizerFormUploadComponent {
   selectedFile: File | null = null;
+  baseStatsSliderValue: number = 1;
+  attacksSliderValue: number = 1;
+  seedCountValue: number = 1;
 
   constructor(
     private http: HttpClient
@@ -20,6 +23,28 @@ export class RandomizerFormUploadComponent {
     const input = event.target as HTMLInputElement;
     if (input.files?.length) {
       this.selectedFile = input.files[0];
+    }
+  }
+
+  onSliderChange(event: any): void {
+    const sliderId = event.target.id;
+    const value = +event.target.value;
+
+    if (sliderId === 'baseStatsSlider') {
+      this.baseStatsSliderValue = value;
+    } else if (sliderId === 'attacksSlider') {
+      this.attacksSliderValue = value;
+    }
+  }
+
+  onSeedCountChange(event: any): void {
+    const value = +event.target.value;
+    if (value >= 1 && value <= 20) {
+      this.seedCountValue = value;
+    } else if (value > 20) {
+      this.seedCountValue = 20;
+    } else {
+      this.seedCountValue = 1;
     }
   }
 
@@ -39,19 +64,23 @@ export class RandomizerFormUploadComponent {
   }
 
   uploadFile(binaryData: ArrayBuffer) {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/octet-stream'
-    });
+    const headers = new HttpHeaders({});
 
-    this.http.post('http://localhost:3000/upload', binaryData, { 
-      headers,
+    const formData = new FormData();
+    const fileBlob = new Blob([binaryData], { type: 'application/octet-stream' });
+    formData.append('file', fileBlob, 'baseROM.z64');
+    formData.append('baseStatsSliderValue', this.baseStatsSliderValue.toString());
+    formData.append('attacksSliderValue', this.attacksSliderValue.toString());
+    formData.append('seedCountValue', this.seedCountValue.toString());
+
+    this.http.post('http://localhost:3000/upload', formData, { 
       responseType: 'blob',
       observe: 'response' 
     })
     .subscribe({
       next: (response: HttpResponse<Blob>) => {
         console.log('Upload successful', response);
-        this.downloadFile(response.body, 'processed/PKseed.z64');
+        this.downloadFile(response.body, 'seeds.zip');
       },
       error: (error: any) => {
         console.log('Upload failed', error);
