@@ -1,4 +1,4 @@
-# Travlr Getaways
+# Pokémon Stadium Randomizer
 
 ## Description
 Pokémon Stadium Randomizer is a webapp that uses a Python script run on the backend to randomize numbers in the game Pokémon Stadium. Users who own a copy of the game can upload it to the website and receive a version of the same game but with different stats and attacks for the Pokémon, as well as new teams for the opponents they face.
