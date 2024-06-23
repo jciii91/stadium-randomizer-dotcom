@@ -60,9 +60,6 @@ To run this project, you need to have the following technologies installed:
   ```sh
   pip install Flask
 
-## Disclaimer
-I do not distribute copies of the game Pokémon Stadium. Users must supply their own copy of the game as it is illegal to distribute ROMs.
-
 ## License
 This project is licensed under the MIT License.
 
