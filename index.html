@@ -1,40 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Custom Slider Form</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Custom Slider Form</title>
+  <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
-    <h1>Custom Slider Form</h1>
-    <form action="#" method="post">
-        <div class="form-group">
-            <label for="slider1">Slider 1:</label>
-            <input type="range" id="slider1" name="slider1" min="0" max="3" value="1" step="1">
-            <span id="slider1Value">Normal</span>
-        </div>
+  <h1>Custom Slider Form</h1>
+  <form id="settings-form" action="#" method="post">
+    <div class="form-group">
+      <label for="slider1">Slider 1:</label>
+      <input type="range" id="slider1" name="slider1" min="0" max="3" value="1" step="1">
+      <span id="slider1Value">Normal</span>
+    </div>
 
-        <div class="form-group">
-            <label for="slider2">Slider 2:</label>
-            <input type="range" id="slider2" name="slider2" min="0" max="3" value="1" step="1">
-            <span id="slider2Value">Normal</span>
-        </div>
+    <div class="form-group">
+      <label for="slider2">Slider 2:</label>
+      <input type="range" id="slider2" name="slider2" min="0" max="3" value="1" step="1">
+      <span id="slider2Value">Normal</span>
+    </div>
 
-        <div class="form-group">
-            <label for="slider3">Slider 3:</label>
-            <input type="range" id="slider3" name="slider3" min="0" max="3" value="1" step="1">
-            <span id="slider3Value">Normal</span>
-        </div>
+    <div class="form-group">
+      <label for="slider3">Slider 3:</label>
+      <input type="range" id="slider3" name="slider3" min="0" max="3" value="1" step="1">
+      <span id="slider3Value">Normal</span>
+    </div>
 
-        <div class="form-group">
-            <label for="number">Number (max 20):</label>
-            <input type="number" id="number" name="number" min="1" max="20" value="1">
-        </div>
+    <div class="form-group">
+      <label for="seed-count">Number (max 20):</label>
+      <input type="number" id="seed-count" name="seed-count" min="1" max="20" value="1">
+    </div>
 
-        <input type="submit" value="Submit">
-    </form>
+    <input type="submit" value="Submit">
+  </form>
 
-    <script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
