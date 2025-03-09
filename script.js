@@ -38,8 +38,12 @@ document.getElementById("settings-form").addEventListener("submit", async functi
     const uploadResponse = await fetch(presignedUrl, {
         method: "PUT",
         body: file,
-        headers: { "Content-Type": "application/octet-stream" }
+        headers: { 
+          "Content-Type": "application/octet-stream",
+          "x-amz-date": new Date().toISOString().replace(/[:-]|\.\d{3}/g, "")
+        }
     });
+    console.log(uploadResponse.status, uploadResponse);
 
     if (uploadResponse.ok) {
         console.log("File uploaded successfully to S3!");
