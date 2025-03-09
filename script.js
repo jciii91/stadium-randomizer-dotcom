@@ -27,30 +27,49 @@ document.getElementById("settings-form").addEventListener("submit", async functi
   reader.onload = async function () {
     const base64String = reader.result.split(",")[1]; // Remove the prefix
 
-    // Collect form data
-    const formData = {
-        slider1: document.getElementById("slider1").value,
-        slider2: document.getElementById("slider2").value,
-        slider3: document.getElementById("slider3").value,
-        seedCount: document.getElementById("seed-count").value,
-        fileName: file.name,
-        fileData: base64String // Encoded file data
-    };
-
-  try {
-    const response = await fetch("https://bbmyb5o2db.execute-api.us-east-2.amazonaws.com/default/stadiumRandomizer", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(formData)
+    const response = await fetch("https://bbmyb5o2db.execute-api.us-east-2.amazonaws.com/default/uploadToS3", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fileName: file.name })
     });
 
-    const data = await response.json();
-    console.log("Response:", data);
-  } catch (error) {
-    console.error("Error:", error);
-  }
-  }
+    const { presignedUrl } = await response.json();
 
+    const uploadResponse = await fetch(presignedUrl, {
+        method: "PUT",
+        body: file,
+        headers: { "Content-Type": "application/octet-stream" }
+    });
+
+    if (uploadResponse.ok) {
+        console.log("File uploaded successfully to S3!");
+
+        // Collect form data
+        const formData = {
+            slider1: document.getElementById("slider1").value,
+            slider2: document.getElementById("slider2").value,
+            slider3: document.getElementById("slider3").value,
+            seedCount: document.getElementById("seed-count").value,
+            fileName: file.name,
+            fileData: base64String // Encoded file data
+        };
+
+        try {
+            const response = await fetch("https://bbmyb5o2db.execute-api.us-east-2.amazonaws.com/default/stadiumRandomizer", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(formData)
+            });
+
+            const data = await response.json();
+            console.log("Response:", data);
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    } else {
+        console.error("Failed to upload file.");
+    }
+  }
 });
