@@ -14,13 +14,28 @@ document.querySelectorAll('input[type="range"]').forEach(slider => {
 document.getElementById("settings-form").addEventListener("submit", async function(event) {
   event.preventDefault();  // Prevent page reload
 
-  // Collect form data
-  const formData = {
-    slider1: document.getElementById("slider1").value,
-    slider2: document.getElementById("slider2").value,
-    slider3: document.getElementById("slider3").value,
-    seedCount: document.getElementById("seed-count").value
-  };
+  const fileInput = document.getElementById("file-upload");
+  const file = fileInput.files[0];
+
+  if (!file) {
+    alert("Please select a file to upload.");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.readAsDataURL(file); // Read file as Base64
+  reader.onload = async function () {
+    const base64String = reader.result.split(",")[1]; // Remove the prefix
+
+    // Collect form data
+    const formData = {
+        slider1: document.getElementById("slider1").value,
+        slider2: document.getElementById("slider2").value,
+        slider3: document.getElementById("slider3").value,
+        seedCount: document.getElementById("seed-count").value,
+        fileName: file.name,
+        fileData: base64String // Encoded file data
+    };
 
   try {
     const response = await fetch("https://bbmyb5o2db.execute-api.us-east-2.amazonaws.com/default/stadiumRandomizer", {
@@ -36,4 +51,6 @@ document.getElementById("settings-form").addEventListener("submit", async functi
   } catch (error) {
     console.error("Error:", error);
   }
+  }
+
 });
