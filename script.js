@@ -37,7 +37,6 @@ document.getElementById("settings-form").addEventListener("submit", async functi
 
     const uploadResponse = await fetch(presignedUrl, {
         method: "PUT",
-        mode: 'no-cors',
         body: file,
         headers: { "Content-Type": "application/octet-stream" }
     });
