@@ -33,7 +33,7 @@ document.getElementById("settings-form").addEventListener("submit", async functi
         body: JSON.stringify({ fileName: file.name })
     });
 
-    const { presignedUrl } = await response.json();
+    const presignedUrl = await response.text();
 
     const uploadResponse = await fetch(presignedUrl, {
         method: "PUT",
