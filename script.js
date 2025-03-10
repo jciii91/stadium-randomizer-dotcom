@@ -39,8 +39,7 @@ document.getElementById("settings-form").addEventListener("submit", async functi
         method: "PUT",
         body: file,
         headers: { 
-          "Content-Type": "application/octet-stream",
-          "x-amz-date": new Date().toISOString().replace(/[:-]|\.\d{3}/g, "")
+          "Content-Type": "application/octet-stream"
         }
     });
     console.log(uploadResponse.status, uploadResponse);
