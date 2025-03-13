@@ -65,7 +65,21 @@ document.getElementById("settings-form").addEventListener("submit", async functi
             });
 
             const data = await response.json();
-            console.log("Response:", data);
+            console.log("Response:", data.status);
+
+            const downloadUrl = data.link;
+
+            if (!downloadUrl) {
+                throw new Error("No download URL returned from server.");
+            }
+
+            // Automatically trigger the file download
+            const a = document.createElement("a");
+            a.href = downloadUrl;
+            a.download = "new-seed.z64"; // Suggested filename
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         } catch (error) {
             console.error("Error:", error);
         }
