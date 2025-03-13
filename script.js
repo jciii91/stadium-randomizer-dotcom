@@ -25,12 +25,15 @@ document.getElementById("settings-form").addEventListener("submit", async functi
   const reader = new FileReader();
   reader.readAsDataURL(file); // Read file as Base64
   reader.onload = async function () {
-    const base64String = reader.result.split(",")[1]; // Remove the prefix
+    // get file name
+    const fileName = {
+        fileName: file.name
+    };
 
     const response = await fetch("https://bbmyb5o2db.execute-api.us-east-2.amazonaws.com/default/uploadToS3", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fileName: file.name })
+        body: JSON.stringify(fileName)
     });
 
     const presignedUrl = await response.text();
