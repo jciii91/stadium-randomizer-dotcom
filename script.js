@@ -22,6 +22,10 @@ document.getElementById("settings-form").addEventListener("submit", async functi
     return;
   }
 
+  console.log({
+    "FileName": file.name
+  });
+
   const reader = new FileReader();
   reader.readAsDataURL(file); // Read file as Base64
   reader.onload = async function () {
@@ -45,7 +49,6 @@ document.getElementById("settings-form").addEventListener("submit", async functi
           "Content-Type": "application/octet-stream"
         }
     });
-    console.log(uploadResponse.status, uploadResponse);
 
     if (uploadResponse.ok) {
         console.log("File uploaded successfully to S3!");
