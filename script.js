@@ -22,6 +22,8 @@ document.getElementById("settings-form").addEventListener("submit", async functi
     return;
   }
 
+  const FILE_NAME = file.name;
+
   const reader = new FileReader();
   reader.readAsDataURL(file); // Read file as Base64
   reader.onload = async function () {
@@ -29,7 +31,7 @@ document.getElementById("settings-form").addEventListener("submit", async functi
     const response = await fetch("https://bbmyb5o2db.execute-api.us-east-2.amazonaws.com/default/uploadToS3", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({fileName: file.name})
+        body: JSON.stringify({fileName: FILE_NAME})
     });
 
     const presignedUrl = await response.text();
@@ -51,7 +53,7 @@ document.getElementById("settings-form").addEventListener("submit", async functi
             slider2: document.getElementById("slider2").value,
             slider3: document.getElementById("slider3").value,
             seedCount: document.getElementById("seed-count").value,
-            fileName: file.name
+            fileName: FILE_NAME
         };
 
         try {
