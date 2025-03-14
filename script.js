@@ -22,12 +22,8 @@ document.getElementById("settings-form").addEventListener("submit", async functi
     return;
   }
 
-  console.log({
-    "FileName": file.name
-  });
-
   const reader = new FileReader();
-  reader.readAsDataURL(file); // Read file as Base64
+  reader.readAsDataURL(file);
   reader.onload = async function () {
     // get file name
     const fileName = {
@@ -39,6 +35,7 @@ document.getElementById("settings-form").addEventListener("submit", async functi
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(fileName)
     });
+    console.log(response.json());
 
     const presignedUrl = await response.text();
 
