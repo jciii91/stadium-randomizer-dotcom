@@ -45,7 +45,7 @@ document.getElementById("settings-form").addEventListener("submit", async functi
     });
 
     if (uploadResponse.ok) {
-        console.log("File uploaded successfully to S3!");
+        console.log("File uploaded successfully");
 
         // Collect form data
         const formData = {
@@ -66,10 +66,7 @@ document.getElementById("settings-form").addEventListener("submit", async functi
             });
 
             const data = await response.json();
-            console.log("Response:", data.status);
-
             const downloadUrl = data.link;
-
             if (!downloadUrl) {
                 throw new Error("No download URL returned from server.");
             }
