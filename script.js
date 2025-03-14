@@ -22,7 +22,7 @@ document.getElementById("settings-form").addEventListener("submit", async functi
     return;
   }
 
-  const FILE_NAME = file.name;
+  const FILE_NAME = crypto.randomUUID();
 
   const reader = new FileReader();
   reader.readAsDataURL(file); // Read file as Base64
