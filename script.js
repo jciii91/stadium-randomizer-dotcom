@@ -31,7 +31,7 @@ document.getElementById("settings-form").addEventListener("submit", async functi
   reader.onload = async function () {
     // get file name
     const fileName = {
-        fileName: file.name
+        "fileName": file.name
     };
 
     const response = await fetch("https://bbmyb5o2db.execute-api.us-east-2.amazonaws.com/default/uploadToS3", {
@@ -55,11 +55,11 @@ document.getElementById("settings-form").addEventListener("submit", async functi
 
         // Collect form data
         const formData = {
-            slider1: document.getElementById("slider1").value,
-            slider2: document.getElementById("slider2").value,
-            slider3: document.getElementById("slider3").value,
-            seedCount: document.getElementById("seed-count").value,
-            fileName: file.name
+            "slider1": document.getElementById("slider1").value,
+            "slider2": document.getElementById("slider2").value,
+            "slider3": document.getElementById("slider3").value,
+            "seedCount": document.getElementById("seed-count").value,
+            "fileName": file.name
         };
 
         try {
