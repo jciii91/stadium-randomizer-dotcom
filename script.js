@@ -62,6 +62,15 @@ document.getElementById("settings-form").addEventListener("submit", async functi
           })
       });
 
+      if (!response.ok) {
+        if (response.status === 400) {
+          updateStatus(response.erorr, true);
+        } else {
+          updateStatus("An error occurred while processing your request.", true);
+        }
+        return; // Stop execution if there's an error
+      }
+
       const presignedUrl = await response.text();
       const uploadResponse = await fetch(presignedUrl, {
           method: "PUT",
