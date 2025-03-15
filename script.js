@@ -1,88 +1,133 @@
+// Slider value mapping
 const sliderValues = ["Vanilla", "Normal", "High", "Extreme"];
 
 function updateSliderValue(sliderId) {
-  const slider = document.getElementById(sliderId);
-  const valueSpan = document.getElementById(sliderId + "Value");
-  valueSpan.textContent = sliderValues[slider.value];
+    const slider = document.getElementById(sliderId);
+    const valueSpan = document.getElementById(sliderId + "Value");
+    valueSpan.textContent = sliderValues[slider.value];
 }
 
+// Initialize sliders
 document.querySelectorAll('input[type="range"]').forEach(slider => {
-  slider.addEventListener('input', () => updateSliderValue(slider.id));
-  updateSliderValue(slider.id); // Initialize the value
+    slider.addEventListener('input', () => updateSliderValue(slider.id));
+    updateSliderValue(slider.id);
 });
 
+// Form submission handler
 document.getElementById("settings-form").addEventListener("submit", async function(event) {
-  event.preventDefault();  // Prevent page reload
+    event.preventDefault(); // Prevent page reload
 
-  const fileInput = document.getElementById("file-upload");
-  const file = fileInput.files[0];
+    const fileInput = document.getElementById("file-upload");
+    const file = fileInput.files[0];
+    const submitButton = document.querySelector('input[type="submit"]');
+    
+    if (!file) {
+        alert("Please select a file to upload.");
+        return;
+    }
 
-  if (!file) {
-    alert("Please select a file to upload.");
-    return;
-  }
+    // Disable submit button and show processing indicator
+    submitButton.disabled = true;
+    showProcessingIndicator(true);
 
-  const FILE_NAME = crypto.randomUUID();
+    const FILE_NAME = crypto.randomUUID();
+    const reader = new FileReader();
 
-  const reader = new FileReader();
-  reader.readAsDataURL(file); // Read file as Base64
-  reader.onload = async function () {
-
-    const response = await fetch("https://bbmyb5o2db.execute-api.us-east-2.amazonaws.com/default/uploadToS3", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({"fileName": FILE_NAME})
-    });
-
-    const presignedUrl = await response.text();
-
-    const uploadResponse = await fetch(presignedUrl, {
-        method: "PUT",
-        body: file,
-        headers: { 
-          "Content-Type": "application/octet-stream"
-        }
-    });
-
-    if (uploadResponse.ok) {
-        console.log("File uploaded successfully");
-
-        // Collect form data
-        const formData = {
-            "slider1": document.getElementById("slider1").value,
-            "slider2": document.getElementById("slider2").value,
-            "slider3": document.getElementById("slider3").value,
-            "seedCount": document.getElementById("seed-count").value,
-            "fileName": FILE_NAME
-        };
-
+    reader.readAsDataURL(file);
+    reader.onload = async function () {
         try {
-            const response = await fetch("https://bbmyb5o2db.execute-api.us-east-2.amazonaws.com/default/stadiumRandomizer", {
-              method: "POST",
-              headers: {
-                  "Content-Type": "application/json"
-              },
-              body: JSON.stringify(formData)
+            const response = await fetch("https://bbmyb5o2db.execute-api.us-east-2.amazonaws.com/default/uploadToS3", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ "fileName": FILE_NAME })
             });
 
-            const data = await response.json();
-            const downloadUrl = data.link;
-            if (!downloadUrl) {
-                throw new Error("No download URL returned from server.");
-            }
+            const presignedUrl = await response.text();
+            const uploadResponse = await fetch(presignedUrl, {
+                method: "PUT",
+                body: file,
+                headers: { "Content-Type": "application/octet-stream" }
+            });
 
-            // Automatically trigger the file download
-            const a = document.createElement("a");
-            a.href = downloadUrl;
-            a.download = "new-seed.z64"; // Suggested filename
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            if (uploadResponse.ok) {
+                console.log("File uploaded successfully");
+
+                // Collect form data
+                const formData = {
+                    "slider1": document.getElementById("slider1").value,
+                    "slider2": document.getElementById("slider2").value,
+                    "slider3": document.getElementById("slider3").value,
+                    "seedCount": document.getElementById("seed-count").value,
+                    "fileName": FILE_NAME
+                };
+
+                // Process file and retrieve download link
+                const result = await processFile(formData);
+                if (result.success) {
+                    triggerDownload(result.downloadUrl);
+                } else {
+                    console.error("Error:", result.error);
+                }
+            } else {
+                console.error("Failed to upload file.");
+            }
         } catch (error) {
             console.error("Error:", error);
+        } finally {
+            // Re-enable submit button and hide processing indicator
+            submitButton.disabled = false;
+            showProcessingIndicator(false);
         }
-    } else {
-        console.error("Failed to upload file.");
-    }
-  }
+    };
 });
+
+// Function to show/hide processing indicator
+function showProcessingIndicator(show) {
+    let spinner = document.getElementById("loadingSpinner");
+    let statusMessage = document.getElementById("statusMessage");
+
+    if (show) {
+        if (!spinner) {
+            spinner = document.createElement("div");
+            spinner.id = "loadingSpinner";
+            spinner.className = "loading-spinner";
+            document.body.appendChild(spinner);
+        }
+        statusMessage.style.display = "block";
+        statusMessage.textContent = "Processing... Please wait.";
+    } else {
+        if (spinner) spinner.remove();
+        statusMessage.style.display = "none";
+    }
+}
+
+// Function to process file and return download URL
+async function processFile(formData) {
+    try {
+        const response = await fetch("https://bbmyb5o2db.execute-api.us-east-2.amazonaws.com/default/stadiumRandomizer", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData)
+        });
+
+        const data = await response.json();
+        return { success: true, downloadUrl: data.link };
+    } catch (error) {
+        return { success: false, error };
+    }
+}
+
+// Function to trigger file download
+function triggerDownload(downloadUrl) {
+    if (!downloadUrl) {
+        console.error("No download URL returned from server.");
+        return;
+    }
+
+    const a = document.createElement("a");
+    a.href = downloadUrl;
+    a.download = "new-seed.z64"; // Suggested filename
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}

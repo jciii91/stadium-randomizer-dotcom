@@ -5,9 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Custom Slider Form</title>
   <link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="icon" type="image/png" href="icons8-dice-16.png">
 </head>
 <body>
   <h1>Custom Slider Form</h1>
+
+  <!-- Processing Indicator -->
+  <div id="loading" class="loading-spinner" style="display: none;"></div>
+  <p id="statusMessage" aria-live="polite" style="display: none; text-align: center;">Processing... Please wait.</p>
+
   <form id="settings-form" action="#" method="post">
     <div class="form-group">
       <label for="slider1">Slider 1:</label>
@@ -36,9 +42,17 @@
       <label for="file-upload">Upload ROM:</label>
       <input type="file" id="file-upload" name="file">
     </div>
-
-    <input type="submit" value="Submit">
+    
+    <!-- Submit Button with Disabled State -->
+    <input type="submit" id="submit-btn" value="Submit">
   </form>
+
+  <footer>
+    <p>
+      <a target="_blank" href="https://icons8.com/icon/iLgZOuB7QegK/dice">Dice</a> icon by  
+      <a target="_blank" href="https://icons8.com">Icons8</a>
+    </p>
+  </footer>  
 
   <script src="script.js"></script>
 </body>
