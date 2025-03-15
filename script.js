@@ -20,15 +20,29 @@ document.getElementById("settings-form").addEventListener("submit", async functi
     const fileInput = document.getElementById("file-upload");
     const file = fileInput.files[0];
     const submitButton = document.querySelector('input[type="submit"]');
-    
+    const statusMessage = document.getElementById("statusMessage");
+
+    // Function to update status messages
+    function updateStatus(message, isError = false) {
+        statusMessage.textContent = message;
+        statusMessage.style.color = isError ? "red" : "black";
+        statusMessage.style.display = "block";
+    }
+
     if (!file) {
-        alert("Please select a file to upload.");
+        updateStatus("Please select a file to upload.", true);
+        return;
+    }
+
+    // Validate file extension
+    if (!file.name.toLowerCase().endsWith(".z64")) {
+        updateStatus("Invalid file type. Please upload a .z64 file.", true);
         return;
     }
 
     // Disable submit button and show processing indicator
     submitButton.disabled = true;
-    showProcessingIndicator(true);
+    updateStatus("Uploading... Please wait.");
 
     const FILE_NAME = crypto.randomUUID();
     const reader = new FileReader();
@@ -50,7 +64,7 @@ document.getElementById("settings-form").addEventListener("submit", async functi
             });
 
             if (uploadResponse.ok) {
-                console.log("File uploaded successfully");
+                updateStatus("File uploaded successfully. Processing...");
 
                 // Collect form data
                 const formData = {
@@ -66,40 +80,19 @@ document.getElementById("settings-form").addEventListener("submit", async functi
                 if (result.success) {
                     triggerDownload(result.downloadUrl);
                 } else {
-                    console.error("Error:", result.error);
+                    updateStatus("Error: " + result.error, true);
                 }
             } else {
-                console.error("Failed to upload file.");
+                updateStatus("File upload failed. Please try again.", true);
             }
         } catch (error) {
-            console.error("Error:", error);
+            updateStatus("Error: " + error.message, true);
         } finally {
-            // Re-enable submit button and hide processing indicator
             submitButton.disabled = false;
-            showProcessingIndicator(false);
+            updateStatus("");
         }
     };
 });
-
-// Function to show/hide processing indicator
-function showProcessingIndicator(show) {
-    let spinner = document.getElementById("loadingSpinner");
-    let statusMessage = document.getElementById("statusMessage");
-
-    if (show) {
-        if (!spinner) {
-            spinner = document.createElement("div");
-            spinner.id = "loadingSpinner";
-            spinner.className = "loading-spinner";
-            document.body.appendChild(spinner);
-        }
-        statusMessage.style.display = "block";
-        statusMessage.textContent = "Processing... Please wait.";
-    } else {
-        if (spinner) spinner.remove();
-        statusMessage.style.display = "none";
-    }
-}
 
 // Function to process file and return download URL
 async function processFile(formData) {
@@ -113,14 +106,14 @@ async function processFile(formData) {
         const data = await response.json();
         return { success: true, downloadUrl: data.link };
     } catch (error) {
-        return { success: false, error };
+        return { success: false, error: error.message };
     }
 }
 
 // Function to trigger file download
 function triggerDownload(downloadUrl) {
     if (!downloadUrl) {
-        console.error("No download URL returned from server.");
+        updateStatus("No download URL returned from server.", true);
         return;
     }
 
