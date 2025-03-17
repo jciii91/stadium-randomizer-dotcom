@@ -90,7 +90,7 @@ document.getElementById("settings-form").addEventListener("submit", async functi
           "slider1": document.getElementById("slider1").value,
           "slider2": document.getElementById("slider2").value,
           "slider3": document.getElementById("slider3").value,
-          "seedCount": document.getElementById("seed-count").value,
+          //"seedCount": document.getElementById("seed-count").value, TODO: allow for generation of multiple seeds
           "fileName": FILE_NAME
         };
 
