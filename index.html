@@ -3,12 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Custom Slider Form</title>
+  <title>Pokémon Stadium Randomizer</title>
   <link rel="stylesheet" type="text/css" href="style.css">
   <link rel="icon" type="image/png" href="icons8-dice-16.png">
 </head>
 <body>
-  <h1>Custom Slider Form</h1>
+  <h1>Pokémon Stadium Randomizer</h1>
+
+  <p><strong>How to Use:</strong></p>
+  <p>
+    Use the file select button below to choose your copy of Pokémon Stadium for modification.
+    The website only supports the US and PAL versions of the game.
+    Adjust the sliders to set the level of randomization you want, then proceed with patching your game.
+  </p>
 
   <!-- Processing Indicator -->
   <div id="loading" class="loading-spinner" style="display: none;"></div>
@@ -16,26 +23,24 @@
 
   <form id="settings-form" action="#" method="post">
     <div class="form-group">
-      <label for="slider1">Slider 1:</label>
+      <label for="slider1">Base Stats Randomization:</label>
       <input type="range" id="slider1" name="slider1" min="0" max="3" value="1" step="1">
       <span id="slider1Value">Normal</span>
+      <p>Controls the level of randomization applied to Pokémon base stats.</p>
     </div>
 
     <div class="form-group">
-      <label for="slider2">Slider 2:</label>
+      <label for="slider2">Gym Castle Round 1 Rental Pokémon:</label>
       <input type="range" id="slider2" name="slider2" min="0" max="3" value="1" step="1">
       <span id="slider2Value">Normal</span>
+      <p>Applies new stats and assigns new moves to the rental Pokémon available in Round 1 of Gym Castle.</p>
     </div>
 
     <div class="form-group">
-      <label for="slider3">Slider 3:</label>
+      <label for="slider3">Gym Castle Round 1 Trainer Pokémon:</label>
       <input type="range" id="slider3" name="slider3" min="0" max="3" value="1" step="1">
       <span id="slider3Value">Normal</span>
-    </div>
-
-    <div class="form-group">
-      <label for="seed-count">Number (max 20):</label>
-      <input type="number" id="seed-count" name="seed-count" min="1" max="20" value="1">
+      <p>Changes the Pokémon used by trainers in Gym Castle Round 1.</p>
     </div>
 
     <div class="form-group">
@@ -46,6 +51,13 @@
     <!-- Submit Button with Disabled State -->
     <input type="submit" id="submit-btn" value="Submit">
   </form>
+
+  <p><strong>Disclaimer:</strong></p>
+  <p>
+    This website does not distribute copyrighted material. All in-game characters, images, and logos
+    are the property of Nintendo and GAME FREAK. Users must provide their own legally obtained copy
+    of the game to use this randomizer.
+  </p>
 
   <footer>
     <p>

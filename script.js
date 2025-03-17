@@ -71,10 +71,7 @@ document.getElementById("settings-form").addEventListener("submit", async functi
         return; // Stop execution if there's an error
       }
 
-      const responseData = await response.json();  // Parse the JSON response
-      const presignedUrl = responseData.body;  // Extract presigned URL
-      const version = responseData.version;    // Extract version
-      
+      const presignedUrl = await response.text();
       const uploadResponse = await fetch(presignedUrl, {
           method: "PUT",
           body: file,
@@ -82,25 +79,24 @@ document.getElementById("settings-form").addEventListener("submit", async functi
       });
 
       if (uploadResponse.ok) {
-        updateStatus("File uploaded successfully. Processing...");
+          updateStatus("File uploaded successfully. Processing...");
 
-        // Collect form data
-        const formData = {
-          "version": version,
-          "slider1": document.getElementById("slider1").value,
-          "slider2": document.getElementById("slider2").value,
-          "slider3": document.getElementById("slider3").value,
-          "seedCount": document.getElementById("seed-count").value,
-          "fileName": FILE_NAME
-        };
+          // Collect form data
+          const formData = {
+              "slider1": document.getElementById("slider1").value,
+              "slider2": document.getElementById("slider2").value,
+              "slider3": document.getElementById("slider3").value,
+              "seedCount": document.getElementById("seed-count").value,
+              "fileName": FILE_NAME
+          };
 
-        // Process file and retrieve download link
-        const result = await processFile(formData);
-        if (result.success) {
-            triggerDownload(result.downloadUrl);
-        } else {
-            updateStatus("Error: " + result.error, true);
-        }
+          // Process file and retrieve download link
+          const result = await processFile(formData);
+          if (result.success) {
+              triggerDownload(result.downloadUrl);
+          } else {
+              updateStatus("Error: " + result.error, true);
+          }
       } else {
           updateStatus("File upload failed. Please try again.", true);
       }
